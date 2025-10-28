@@ -1,0 +1,112 @@
+CREATE DATABASE employeeDB;
+USE employeeDB;
+
+CREATE TABLE employees (
+    emp_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    city VARCHAR(50),
+    salary FLOAT
+);
+
+
+
+
+
+
+
+
+python
+import mysql.connector
+
+# Database connection
+con = mysql.connector.connect(
+    host="localhost",
+    user="root",        # change to your MySQL username
+    password="yourpassword",  # change to your MySQL password
+    database="employeeDB"
+)
+
+cursor = con.cursor()
+
+# ========== CRUD Functions ==========
+
+def add_employee():
+    emp_id = int(input("Enter Employee ID: "))
+    name = input("Enter Employee Name: ")
+    city = input("Enter City: ")
+    salary = float(input("Enter Salary: "))
+
+    query = "INSERT INTO employees (emp_id, name, city, salary) VALUES (%s, %s, %s, %s)"
+    values = (emp_id, name, city, salary)
+
+    cursor.execute(query, values)
+    con.commit()
+    print("\n✅ Employee added successfully!\n")
+
+def show_employees():
+    cursor.execute("SELECT * FROM employees")
+    result = cursor.fetchall()
+    print("\n===== Employee List =====")
+    for row in result:
+        print(f"ID: {row[0]}, Name: {row[1]}, City: {row[2]}, Salary: {row[3]}")
+    print("==========================\n")
+
+def update_employee():
+    emp_id = int(input("Enter Employee ID to Update: "))
+    new_salary = float(input("Enter New Salary: "))
+
+    query = "UPDATE employees SET salary = %s WHERE emp_id = %s"
+    values = (new_salary, emp_id)
+
+    cursor.execute(query, values)
+    con.commit()
+    if cursor.rowcount > 0:
+        print("\n✅ Employee updated successfully!\n")
+    else:
+        print("\n⚠️ No employee found with that ID.\n")
+
+def delete_employee():
+    emp_id = int(input("Enter Employee ID to Delete: "))
+
+    query = "DELETE FROM employees WHERE emp_id = %s"
+    cursor.execute(query, (emp_id,))
+    con.commit()
+    if cursor.rowcount > 0:
+        print("\n🗑️ Employee deleted successfully!\n")
+    else:
+        print("\n⚠️ No employee found with that ID.\n")
+
+# ========== Main Menu ==========
+
+def main_menu():
+    while True:
+        print("====== Employee Management System ======")
+        print("1. Add Employee")
+        print("2. Show All Employees")
+        print("3. Update Employee Salary")
+        print("4. Delete Employee")
+        print("5. Exit")
+        print("=======================================")
+
+        choice = input("Enter your choice (1-5): ")
+
+        if choice == '1':
+            add_employee()
+        elif choice == '2':
+            show_employees()
+        elif choice == '3':
+            update_employee()
+        elif choice == '4':
+            delete_employee()
+        elif choice == '5':
+            print("👋 Exiting... Goodbye!")
+            break
+        else:
+            print("❌ Invalid choice! Please enter between 1–5.\n")
+
+# Run the program
+if __name__ == "__main__":
+    main_menu()
+    cursor.close()
+    con.close()
+

@@ -1,0 +1,62 @@
+// ===== MongoDB CRUD Script =====
+
+// Step 1: Use (or Create) Database
+use employeeDB;
+
+// Step 2: Create Collection (optional)
+db.createCollection("employees");
+
+// Step 3: Insert 8 Employee Records
+db.employees.insertMany([
+  { emp_id: 101, name: "Manish", city: "Delhi", salary: 55000 },
+  { emp_id: 102, name: "Dev", city: "Mumbai", salary: 60000 },
+  { emp_id: 103, name: "Vanshika", city: "Pune", salary: 65000 },
+  { emp_id: 104, name: "Sahil", city: "Bangalore", salary: 70000 },
+  { emp_id: 105, name: "Rajat", city: "Chennai", salary: 72000 },
+  { emp_id: 106, name: "Vishal", city: "Kolkata", salary: 68000 },
+  { emp_id: 107, name: "Rishabh", city: "Hyderabad", salary: 64000 },
+  { emp_id: 108, name: "Divyanshi", city: "Jaipur", salary: 75000 }
+]);
+
+print("\n=== Data Inserted Successfully ===\n");
+
+// Step 4: READ Operations
+print("\n=== All Employees ===");
+printjson(db.employees.find().toArray());
+
+print("\n=== Employees with salary > 65000 ===");
+printjson(db.employees.find({ salary: { $gt: 65000 } }).toArray());
+
+print("\n=== Employee named 'Manish' ===");
+printjson(db.employees.find({ name: "Manish" }).toArray());
+
+// Step 5: UPDATE Operations
+print("\n=== Updating Dev’s Salary to 62000 ===");
+db.employees.updateOne(
+  { name: "Dev" },
+  { $set: { salary: 62000 } }
+);
+
+print("\n=== Updating City from Delhi → New Delhi ===");
+db.employees.updateMany(
+  { city: "Delhi" },
+  { $set: { city: "New Delhi" } }
+);
+
+// Verify updates
+print("\n=== After Update ===");
+printjson(db.employees.find().toArray());
+
+// Step 6: DELETE Operations
+print("\n=== Deleting Employee Rajat ===");
+db.employees.deleteOne({ name: "Rajat" });
+
+print("\n=== Deleting Employees with salary < 60000 ===");
+db.employees.deleteMany({ salary: { $lt: 60000 } });
+
+// Step 7: Final Data
+print("\n=== Final Employee List ===");
+printjson(db.employees.find().toArray());
+
+print("\n=== CRUD Operations Completed Successfully ===\n");
+
